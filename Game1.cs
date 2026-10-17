@@ -26,8 +26,14 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
+        _graphics.PreferredBackBufferWidth = 1280;
+        _graphics.PreferredBackBufferHeight = 720;
+        _graphics.ApplyChanges();
+
         _cbgs = new[]
         {
+            new CuteBallGames(_random, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),
+            new CuteBallGames(_random, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),
             new CuteBallGames(_random, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),
             new CuteBallGames(_random, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),
             new CuteBallGames(_random, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),
@@ -82,7 +88,13 @@ public class Game1 : Game
                 _spriteBatch.Draw(_pisces, new Vector2(x, y), new Rectangle(((_animationFrame+x+y)%36)*300, 0, 300, 300), Color.White);
             }
         }
-        _spriteBatch.Draw(_background, new Vector2(0, 0), null, new Color(63, 63, 63, 63));
+        _spriteBatch.End();
+
+        _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null, null, Matrix.CreateTranslation(-1280/2, -720/2, 0) * Matrix.CreateRotationZ((float)gameTime.TotalGameTime.TotalSeconds) * Matrix.CreateScale(new Vector3(3 + (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds), 3 + (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds), 1)) * Matrix.CreateTranslation(1280/2, 720/2, 0));
+        _spriteBatch.Draw(_background, new Vector2(0, 0), new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), new Color(63, 63, 63, 63));
+        _spriteBatch.End();
+
+        _spriteBatch.Begin();
         foreach (CuteBallGames cbg in _cbgs)
         {
             cbg.Draw(gameTime, _spriteBatch);
